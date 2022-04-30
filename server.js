@@ -20,6 +20,7 @@ app.use('/public', express.static(`${process.cwd()}/public`));
 // Import parts of the url model from url.js
 const Url = require('./url.js').urlModel;
 const createUrl = require('./url.js').createUrl;
+const findUrl = require('./url.js').findUrl;
 
 // Handles the bulk of the api uses
 app.post('/api/shorturl', (req, res, next) => {
@@ -32,6 +33,16 @@ app.post('/api/shorturl', (req, res, next) => {
       res.json(data);
     }
   });
+});
+
+app.get('/api/shorturl/:url', (req, res) => {
+  findUrl(req.params.url, (err, data) => {
+    if (err) {
+      res.json({"error:": "No short URL found for the given input"});
+    } else {
+      res.redirect(data.original);
+    }
+  })
 });
 
 app.get('/', function(req, res) {

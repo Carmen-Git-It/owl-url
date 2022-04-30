@@ -73,7 +73,7 @@ const createUrl = function(urlString, done) {
 }
 
 const findUrl = function(urlString, done) {
-    Url.findOne({"original": urlString}, (err, url) => {
+    Url.findOne({"shortened": urlString}, (err, url) => {
         if (err) {
             console.log(err);
             done(err, null);
