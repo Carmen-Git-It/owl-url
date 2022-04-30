@@ -52,7 +52,6 @@ const createUrl = function(urlString, done) {
                     nextNumber = 1;
                 } else {
                     nextNumber = data.shortened + 1;
-                    console.log("DATA SHORTENED " + nextNumber);
                 }
 
                 const newUrl = new Url({"original": urlString, "shortened": nextNumber});

@@ -25,12 +25,10 @@ const findUrl = require('./url.js').findUrl;
 // Handles the bulk of the api uses
 app.post('/api/shorturl', (req, res, next) => {
   createUrl(req.body.url, (err, data) => {
-
     if (err) {
       next(err);
     } else {
-      console.log(data);
-      res.json(data);
+      res.json({"original_url": data.original, "short_url": data.shortened});
     }
   });
 });
