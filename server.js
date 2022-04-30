@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require("body-parser");
+const dns = require('dns');
 
 let ready = false;
 
@@ -24,11 +25,17 @@ const findUrl = require('./url.js').findUrl;
 
 // Handles the bulk of the api uses
 app.post('/api/shorturl', (req, res, next) => {
-  createUrl(req.body.url, (err, data) => {
+  dns.lookup(req.body.url, (err, addresses) => {
     if (err) {
-      next(err);
+      res.json({"error": "invalid url"});
     } else {
-      res.json({"original_url": data.original, "short_url": data.shortened});
+      createUrl(req.body.url, (err, data) => {
+        if (err) {
+          next(err);
+        } else {
+          res.json({"original_url": data.original, "short_url": data.shortened});
+        }
+      });
     }
   });
 });
