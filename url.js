@@ -30,33 +30,59 @@ urlSchema.statics.generateNewShort = function(callback) {
 
 const Url = mongoose.model("url", urlSchema);
 
+/*
+    Searches for the url string in the database.
+    If a match is found, send the matched url to the callback.
+    If no match is found, generate a new shortened url
+    and save in a database.
+*/
 const createUrl = function(urlString, done) {
     Url.findOne({"original": urlString}, (err, url) => {
         if (err) {  
+            console.log(err);
+            return done(err, null);
+        } else if (url == null) {
             // Original string match not found, generate next shortened url
-            let nextNumber;
+            let nextNumber = 0;
             Url.generateNewShort((err, data) => {
                 if (err) {
+                    console.log(err);
+                    return done(err, null);
+                } else if (data == null) {
                     nextNumber = 1;
                 } else {
-                    nextNumber = data.shortened;
+                    nextNumber = data.shortened + 1;
+                    console.log("DATA SHORTENED " + nextNumber);
                 }
-            });
-            // Create new url and save in DB
-            const newUrl = new Url({"original": urlString, "shortened": nextNumber});
-            newUrl.save((err, res) => {
-                if (err) {
-                    console.log(err);
-                    done(err);
-                } else {
-                    done(res);
-                }
+
+                const newUrl = new Url({"original": urlString, "shortened": nextNumber});
+                newUrl.save((err, res) => {
+                    if (err) {
+                        console.log(err);
+                        return done(err, null);
+                    } else {
+                        return done(null, res);
+                    }
+                });
             });
         } else {
             // Original string match was found, return existing url
+            return done(null, url);
+        }
+    });
+}
+
+const findUrl = function(urlString, done) {
+    Url.findOne({"original": urlString}, (err, url) => {
+        if (err) {
+            console.log(err);
+            done(err, null);
+        } else {
             done(null, url);
         }
     });
 }
 
 exports.urlModel = Url;
+exports.createUrl = createUrl;
+exports.findUrl = findUrl;
