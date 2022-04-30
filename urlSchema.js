@@ -12,4 +12,4 @@ const urlSchema = new Schema({
     }
 });
 
-exports.urlSchema = url;
+exports.urlSchema = urlSchema;
