@@ -10,16 +10,18 @@ let ready = false;
 // Basic Configuration
 const port = process.env.PORT || 3000;
 
+// Add middleware
 app.use(cors());
-
 app.use(bodyParser.urlencoded({extended:"false"}));
 app.use(bodyParser.json());
 
 app.use('/public', express.static(`${process.cwd()}/public`));
 
+// Import parts of the url model from url.js
 const Url = require('./url.js').urlModel;
 const createUrl = require('./url.js').createUrl;
 
+// Handles the bulk of the api uses
 app.post('/api/shorturl', (req, res, next) => {
   createUrl(req.body.url, (err, data) => {
 
