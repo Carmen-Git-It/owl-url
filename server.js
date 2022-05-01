@@ -25,8 +25,11 @@ const findUrl = require('./url.js').findUrl;
 
 // Handles the bulk of the api uses
 app.post('/api/shorturl', (req, res, next) => {
-  dns.lookup(req.body.url, (err, addresses) => {
-    if (err) {
+  const url = new URL(req.body.url)
+  dns.resolve(url.host, (err, addresses) => {
+    console.log(req.body.url);
+    console.log(err);
+    if (err && err.code === 'ENOTFOUND') {
       res.json({"error": "invalid url"});
     } else {
       createUrl(req.body.url, (err, data) => {
